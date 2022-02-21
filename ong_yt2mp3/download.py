@@ -4,6 +4,7 @@ import youtube_dl
 
 # base_dir = os.path.abspath(os.curdir)
 base_dir = os.path.join(os.path.expanduser("~"), "Documents")
+test_url = "https://www.youtube.com/watch?v=uqQglwBzFT4"    # imperial march
 
 
 def get_ydl_opts(download_path: str) -> dict:
@@ -49,4 +50,4 @@ def download_mp3(link: str, destination_path: str = None) -> bool:
 
 if __name__ == '__main__':
     # Testing with the imperial march!!!
-    download_mp3("https://www.youtube.com/watch?v=uqQglwBzFT4")
+    download_mp3(test_url)

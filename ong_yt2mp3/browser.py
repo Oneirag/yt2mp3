@@ -19,23 +19,6 @@ from ong_yt2mp3.download import download_mp3
 ICON_PATH = os.path.join(os.path.dirname(__file__), "images")
 
 
-class RunnableDownloadProcess(QRunnable):
-    def __init__(self, link):
-        QRunnable.__init__(self)
-        self.link = link
-        self.th = None
-
-    def run(self):
-        download_mp3(self.link)
-
-    def start(self):
-        QThreadPool.globalInstance().start(self)
-
-    def stop(self):
-        if self.th:
-            self.th.stop()
-
-
 class DownloadThread(QThread):
 
     def __init__(self, link):
@@ -64,6 +47,7 @@ class MainWindow(QMainWindow):
 
         self.status = QStatusBar()
         self.setStatusBar(self.status)
+        self.status.setStatusTip("Downloading to ")
 
         download_menu = self.menuBar().addMenu("&Download")
         download_file_action = QAction(QIcon(os.path.join(ICON_PATH, 'disk--arrow.png')), "Download mp3", self)
@@ -71,35 +55,23 @@ class MainWindow(QMainWindow):
         download_menu.triggered.connect(self.download_mp3_file)
         download_menu.addAction(download_file_action)
 
-        cancel_download_action = QAction(QIcon(os.path.join(ICON_PATH, 'cross-circle.png')), "Cancel mp3 downloads", self)
-        cancel_download_action.setStatusTip("Cancel all mp3 downloads")
-        download_menu.triggered.connect(self.cancel_downloads)
-        download_menu.addAction(cancel_download_action)
-
         # self.show()
         self.showMaximized()
 
-        self.setWindowIcon(QIcon(os.path.join(ICON_PATH, 'ma-icon-64.png')))
+        self.setWindowIcon(QIcon(os.path.join(ICON_PATH, 'yt2mp3.png')))
 
     def download_mp3_file(self):
         link = self.browser.url().url()
         # self.status.setStatusTip(f"Downloading mp3 from {link}")
-        download_process = RunnableDownloadProcess(link=link)
-        #download_process = DownloadThread(link=link)
-        #download_process.setTerminationEnabled(True)
-        self.downloads.append(download_process)
-        download_process.start()
-        # self.downloads[-1].start()
-        notifiy(f"Downloading mp3 from {link}")
-        # download_mp3(link)
-
-    def cancel_downloads(self):
-        for p in self.downloads:
-            p.stop()
+        from ong_yt2mp3.dialog_progress import MainWindow as ProgressWindow
+        p = ProgressWindow(parent=self)
+        p.url_le.setText(link)
+        p.show()
+        p.download()
 
     def update_title(self, ok):
         title = self.browser.page().title()
-        self.setWindowTitle("%s - MooseAche" % title)
+        self.setWindowTitle("%s - OngYouTubeDownloader" % title)
         if self.first_load:
             import time
             time.sleep(1.5)       # Needs a bit of time to load page JS
@@ -117,14 +89,13 @@ def notifiy(msg, title="Python"):
 
 def main():
     app = QApplication(sys.argv)
-    app.setApplicationName("MooseAche")
-    app.setOrganizationName("MooseAche")
-    app.setOrganizationDomain("MooseAche.org")
+    #app.setApplicationName("MooseAche")
+    #app.setOrganizationName("MooseAche")
+    #app.setOrganizationDomain("MooseAche.org")
 
     window = MainWindow()
 
     exit(app.exec())
-    #app.exec_()
 
 
 if __name__ == '__main__':
