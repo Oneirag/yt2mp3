@@ -1,0 +1,10 @@
+youtube-dl                  # for downloading videos
+youtube-search-python       # for searching youtube by name
+pynormalize                 # for normalizing volume of mp3 files
+
+
+PyQt6
+PyQt6-WebEngine
+plyer   # does not work in macos!!
+pync    # works in macos
+
