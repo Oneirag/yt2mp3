@@ -17,6 +17,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.download_btn = QtWidgets.QPushButton(self.tr("Download"))
         if parent is not None:
             self.download_btn.hide()
+        self.cancel_download_btn = QtWidgets.QPushButton(self.tr("Cancel"))
+        if parent is not None:
+            self.download_btn.hide()
+
         self.progress_lbl = QtWidgets.QLabel()
         self.download_pgb = QtWidgets.QProgressBar()
         self.log_edit = QtWidgets.QPlainTextEdit(readOnly=True)
@@ -27,6 +31,7 @@ class MainWindow(QtWidgets.QMainWindow):
         lay.addWidget(QtWidgets.QLabel(self.tr("url:")))
         lay.addWidget(self.url_le, 0, 1)
         lay.addWidget(self.download_btn, 0, 2)
+        lay.addWidget(self.cancel_download_btn, 0, 3)
         lay.addWidget(self.progress_lbl, 1, 1, 1, 2)
         lay.addWidget(self.download_pgb, 2, 1, 1, 2)
         lay.addWidget(self.log_edit, 3, 1, 1, 2)
@@ -35,6 +40,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.downloader = QYoutubeDL()
 
         self.download_btn.clicked.connect(self.download)
+        self.cancel_download_btn.clicked.connect(self.handle_cancel_download)
 
         self.url_le.setText(test_url)
 
@@ -59,7 +65,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.downloader.download([url], options)
         qhook.infoChanged.connect(self.handle_info_changed)
         qlogger.messageChanged.connect(self.log_edit.appendPlainText)
-        self.downloader.finished.connect(self.handle_download_finished)
         self.download_pgb.setRange(0, 1)
 
     def handle_download_finished(self, b):
@@ -82,6 +87,16 @@ class MainWindow(QtWidgets.QMainWindow):
             self.progress_lbl.setText("{:.2f}%".format(100.0 * downloaded / total))
             self.download_pgb.setMaximum(total)
             self.download_pgb.setValue(downloaded)
+        elif d['status'] == "finished":
+            self.handle_download_finished(True)
+
+    def handle_cancel_download(self):
+        self.downloader.stop()
+        dlg = QtWidgets.QMessageBox(self)
+        dlg.setWindowTitle("Canceled")
+        dlg.setText("Download canceled by user!")
+        button = dlg.exec()
+        self.close()
 
 
 def main():

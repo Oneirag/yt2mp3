@@ -8,28 +8,13 @@ from PyQt6.QtGui import *
 from PyQt6.QtWebEngineWidgets import *
 
 from plyer import notification
-import pync
-
-
 import os
 import sys
 
-from ong_yt2mp3.download import download_mp3
+if sys.platform == "darwin":
+    import pync     # Notifications that work in macos
 
 ICON_PATH = os.path.join(os.path.dirname(__file__), "images")
-
-
-class DownloadThread(QThread):
-
-    def __init__(self, link):
-        QThread.__init__(self)
-        self.link = link
-
-    def run(self):
-        download_mp3(self.link)
-
-    def stop(self):
-        self.terminate()
 
 
 class MainWindow(QMainWindow):
@@ -57,8 +42,6 @@ class MainWindow(QMainWindow):
 
         # self.show()
         self.showMaximized()
-
-        self.setWindowIcon(QIcon(os.path.join(ICON_PATH, 'yt2mp3.png')))
 
     def download_mp3_file(self):
         link = self.browser.url().url()
@@ -94,6 +77,7 @@ def main():
     #app.setOrganizationDomain("MooseAche.org")
 
     window = MainWindow()
+    app.setWindowIcon(QIcon(os.path.join(ICON_PATH, 'yt2mp3.png')))
 
     exit(app.exec())
 
