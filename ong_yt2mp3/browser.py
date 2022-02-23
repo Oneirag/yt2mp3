@@ -10,6 +10,7 @@ from PyQt6.QtWebEngineWidgets import *
 from plyer import notification
 import os
 import sys
+from ong_yt2mp3.download import base_dir
 
 if sys.platform == "darwin":
     import pync     # Notifications that work in macos
@@ -20,6 +21,7 @@ ICON_PATH = os.path.join(os.path.dirname(__file__), "images")
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
+        self.destination_dir = os.path.join(base_dir, "mp3")
 
         self.first_load = True
         self.downloads = list()
@@ -37,11 +39,22 @@ class MainWindow(QMainWindow):
         download_menu = self.menuBar().addMenu("&Download")
         download_file_action = QAction(QIcon(os.path.join(ICON_PATH, 'disk--arrow.png')), "Download mp3", self)
         download_file_action.setStatusTip("Download mp3 file from youtube")
-        download_menu.triggered.connect(self.download_mp3_file)
+        download_file_action.triggered.connect(self.download_mp3_file)
         download_menu.addAction(download_file_action)
+        download_menu.addSeparator()
+        config_path_action = QAction(QIcon(), "Config path", self)
+        config_path_action.setStatusTip("Define directory for downloading files")
+        config_path_action.triggered.connect(self.change_destination_path)
+        download_menu.addAction(config_path_action)
+
 
         # self.show()
         self.showMaximized()
+
+    def change_destination_path(self):
+        chosen_dir = str(QFileDialog.getExistingDirectory(self, "Select Directory", self.destination_dir))
+        if chosen_dir:
+            self.destination_dir = chosen_dir
 
     def download_mp3_file(self):
         link = self.browser.url().url()
@@ -50,7 +63,7 @@ class MainWindow(QMainWindow):
         p = ProgressWindow(parent=self)
         p.url_le.setText(link)
         p.show()
-        p.download()
+        p.download(self.destination_dir)
 
     def update_title(self, ok):
         title = self.browser.page().title()

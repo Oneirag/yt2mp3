@@ -49,7 +49,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.resize(640, 480)
 
-    def download(self):
+    def download(self, destination_dir: str = None):
         qhook = QHook()
         qlogger = QLogger()
         url = self.url_le.text()
@@ -61,7 +61,9 @@ class MainWindow(QtWidgets.QMainWindow):
             "logger": qlogger,
             "progress_hooks": [qhook],
         }
-        options.update(get_ydl_opts(os.path.join(base_dir, "mp3")))
+        if destination_dir is None:
+            destination_dir = os.path.join(base_dir, "mp3")
+        options.update(get_ydl_opts(destination_dir))
         # options['logger'] = qlogger
         # options['progress_hooks'] = [qhook]
         # options['noprogress'] = True
