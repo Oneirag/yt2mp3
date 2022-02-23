@@ -13,6 +13,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.filename = None
+        self.tmpfilename = None
+
         self.url_le = QtWidgets.QLineEdit()
         self.download_btn = QtWidgets.QPushButton(self.tr("Download"))
         if parent is not None:
@@ -58,43 +61,52 @@ class MainWindow(QtWidgets.QMainWindow):
             "logger": qlogger,
             "progress_hooks": [qhook],
         }
-        options = get_ydl_opts(os.path.join(base_dir, "mp3"))
-        options['logger'] = qlogger
-        options['progress_hooks'] = [qhook]
-        options['noprogress'] = True
-        self.downloader.download([url], options)
+        options.update(get_ydl_opts(os.path.join(base_dir, "mp3")))
+        # options['logger'] = qlogger
+        # options['progress_hooks'] = [qhook]
+        # options['noprogress'] = True
         qhook.infoChanged.connect(self.handle_info_changed)
         qlogger.messageChanged.connect(self.log_edit.appendPlainText)
         self.download_pgb.setRange(0, 1)
+        self.downloader.download([url], options)
 
     def handle_download_finished(self, b):
         dlg = QtWidgets.QMessageBox(self)
         dlg.setWindowTitle("Finished")
-        dlg.setText("Download finished!")
+        dlg.setText("Download '{}' finished!".format(self.filename))
         button = dlg.exec()
         self.close()
 
-        # if button == QtWidgets.QMessageBox.StandardButton.Ok:
-        #     print("OK!")
-
     def handle_info_changed(self, d):
-        if d["status"] == "downloading":
-            self.progress_lbl.show()
-            total = d["total_bytes"]
-            downloaded = d["downloaded_bytes"]
-            #self.progress_lbl.setText("{} of {}".format(size(downloaded), size(total)))
-            # self.progress_lbl.setText("{} of {}".format(downloaded, total))
-            self.progress_lbl.setText("{:.2f}%".format(100.0 * downloaded / total))
-            self.download_pgb.setMaximum(total)
-            self.download_pgb.setValue(downloaded)
-        elif d['status'] == "finished":
-            self.handle_download_finished(True)
+        try:
+            if d["status"] == "downloading":
+                self.progress_lbl.show()
+                total = d["total_bytes"]
+                downloaded = d["downloaded_bytes"]
+                speed_kbps = d.get('speed', 0) / 1024
+                self.tmpfilename = d.get('tmpfilename')
+                self.filename = d.get('filename')
+                total_mb = total / 1024 / 1024 if total else 0
+                percentage = 100.0 * downloaded / total
+                self.progress_lbl.setText(f"{percentage:.2f}% of {total_mb:.2f}Mb [{speed_kbps:.2f}kb/s]")
+                self.download_pgb.setMaximum(total)
+                self.download_pgb.setValue(downloaded)
+            elif d['status'] == "finished":
+                self.tmpfilename = None
+                self.filename = d.get('filename')
+                self.handle_download_finished(True)
+        finally:
+            pass
 
     def handle_cancel_download(self):
         self.downloader.stop()
         dlg = QtWidgets.QMessageBox(self)
-        dlg.setWindowTitle("Canceled")
-        dlg.setText("Download canceled by user!")
+        dlg.setWindowTitle("Download canceled")
+        dlg.setText("Download '{}' canceled by user!".format(self.filename))
+        if os.path.isfile(self.filename):
+            os.remove(self.filename)
+        if os.path.isfile(self.tmpfilename):
+            os.remove(self.tmpfilename)
         button = dlg.exec()
         self.close()
 
