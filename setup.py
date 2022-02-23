@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='yt2mp3',
-    version='0.0.1',
+    version='0.1.0',
     packages=['ong_yt2mp3'],
     url='https://github.com/Oneirag/yt2mp3.git',
     license='',
@@ -13,5 +13,10 @@ setup(
     author_email='oneirag@yahoo.es',
     description='Simple tool to download mp3 from youtube',
     install_requires=requirements,
+    entry_points={
+        'console_scripts': [
+            'yt2mp3 = ong_yt2mp3.browser:main',
+        ],
+    }
     
 )
