@@ -5,8 +5,8 @@ with open('requirements.txt') as f:
 
 setup(
     name='yt2mp3',
-    version='0.1.2',
-    packages=['ong_yt2mp3'],
+    version='0.1.3',
+    packages=['ong_yt2mp3', 'ong_yt2mp3.icons'],
     url='https://github.com/Oneirag/yt2mp3.git',
     license='',
     author='oneirag',
