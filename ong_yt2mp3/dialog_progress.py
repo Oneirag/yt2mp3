@@ -64,9 +64,6 @@ class MainWindow(QtWidgets.QMainWindow):
         if destination_dir is None:
             destination_dir = os.path.join(base_dir, "mp3")
         options.update(get_ydl_opts(destination_dir))
-        # options['logger'] = qlogger
-        # options['progress_hooks'] = [qhook]
-        # options['noprogress'] = True
         qhook.infoChanged.connect(self.handle_info_changed)
         qlogger.messageChanged.connect(self.log_edit.appendPlainText)
         self.download_pgb.setRange(0, 1)
@@ -94,9 +91,17 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.download_pgb.setMaximum(total)
                 self.download_pgb.setValue(downloaded)
             elif d['status'] == "finished":
+                pass    # download finished, but still normalizing
                 self.tmpfilename = None
-                self.filename = d.get('filename')
+            #     self.filename = d.get('filename')
+            #     self.handle_download_finished(True)
+            elif d['status'] == "normalizing":
+                pass
+            elif d['status'] == "normalizing_finished":
+                self.filename = d.get("filename")
                 self.handle_download_finished(True)
+            else:
+                pass
         finally:
             pass
 
@@ -105,10 +110,11 @@ class MainWindow(QtWidgets.QMainWindow):
         dlg = QtWidgets.QMessageBox(self)
         dlg.setWindowTitle("Download canceled")
         dlg.setText("Download '{}' canceled by user!".format(self.filename))
-        if os.path.isfile(self.filename):
-            os.remove(self.filename)
-        if os.path.isfile(self.tmpfilename):
-            os.remove(self.tmpfilename)
+        if self.filename:
+            if os.path.isfile(self.filename):
+                os.remove(self.filename)
+            if os.path.isfile(self.tmpfilename):
+                os.remove(self.tmpfilename)
         button = dlg.exec()
         self.close()
 

@@ -2,8 +2,7 @@ import sys
 import os
 import youtube_dl
 
-# base_dir = os.path.abspath(os.curdir)
-base_dir = os.path.join(os.path.expanduser("~"), "Documents")
+base_dir = os.path.join(os.path.expanduser("~"), "Downloads", "yt2mp3")
 test_url = "https://www.youtube.com/watch?v=uqQglwBzFT4"    # imperial march
 
 
@@ -36,7 +35,7 @@ def download_mp3(link: str, destination_path: str = None) -> bool:
     :return: True of downloaded ok
     """
     if destination_path is None:
-        destination_path = os.path.join(base_dir, "mp3")
+        destination_path = base_dir
     os.makedirs(destination_path, exist_ok=True)
     with youtube_dl.YoutubeDL(get_ydl_opts(destination_path)) as ydl:
         for i in range(5):
