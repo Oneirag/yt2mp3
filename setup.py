@@ -5,8 +5,12 @@ with open('requirements.txt') as f:
 
 setup(
     name='yt2mp3',
-    version='0.1.3',
+    version='0.1.4',
     packages=['ong_yt2mp3', 'ong_yt2mp3.icons'],
+    package_data={
+        # Include icon files
+        "ong_yt2mp3.icons": ["*.png"],
+    },
     url='https://github.com/Oneirag/yt2mp3.git',
     license='',
     author='oneirag',
@@ -18,5 +22,5 @@ setup(
             'yt2mp3 = ong_yt2mp3.browser:main',
         ],
     }
-    
+
 )
