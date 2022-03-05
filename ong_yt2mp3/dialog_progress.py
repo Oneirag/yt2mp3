@@ -1,7 +1,7 @@
 """
 Based on https://stackoverflow.com/questions/63757798/how-to-integrate-youtube-dl-in-pyqt5
 """
-from PyQt6 import QtWidgets
+from PyQt6 import QtWidgets, QtCore
 
 from ong_yt2mp3.qyoutubedl import QLogger, QHook, QYoutubeDL
 
@@ -10,9 +10,10 @@ import os
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    close_signal = QtCore.pyqtSignal(QtWidgets.QMainWindow)
+
     def __init__(self, parent=None):
         super().__init__(parent)
-
         self.filename = None
         self.tmpfilename = None
 
@@ -118,6 +119,10 @@ class MainWindow(QtWidgets.QMainWindow):
                 os.remove(self.tmpfilename)
         button = dlg.exec()
         self.close()
+
+    def close(self) -> bool:
+        self.close_signal.emit(self)
+        return super().close()
 
 
 def main():

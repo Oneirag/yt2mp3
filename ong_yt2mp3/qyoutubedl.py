@@ -12,22 +12,59 @@ class StopDownloadException(Exception):
     pass
 
 
-class QLogger(QtCore.QObject):
+class QtHandler(logging.Handler):
+
+    def __init__(self, signal: QtCore.pyqtSignal):
+        super().__init__()
+        self.signal = signal
+
+    def handle(self, record: logging.LogRecord) -> bool:
+        msg = self.format(record)
+        self.signal.emit(msg)
+
+
+class QLogger(logging.Logger, QtCore.QObject):
     messageChanged = QtCore.pyqtSignal(str)
+
+    def __init__(self):
+        logging.Logger.__init__(self, __name__)
+        QtCore.QObject.__init__(self)
+        handler = logging.StreamHandler()
+        self.addHandler(handler)
+        self.setLevel(logging.DEBUG)
+        qt_handler = QtHandler(self.messageChanged)
+        self.addHandler(qt_handler)
+
+
+class QLoggerOld(QtCore.QObject):
+    messageChanged = QtCore.pyqtSignal(str)
+
+    def __init__(self):
+        super(QLogger, self).__init__()
+        self.log = logging.getLogger(__name__)
+        handler = logging.StreamHandler()
+        self.log.addHandler(handler)
+        self.log.setLevel(logging.INFO)
+        qt_handler = QtHandler(self.messageChanged)
+        self.log.addHandler(qt_handler)
 
     def emit(self, msg, *args, **kwargs):
         self.messageChanged.emit(msg % args)
 
     def debug(self, msg, *args, **kwargs):
+        self.log.debug(msg, *args, **kwargs)
         self.emit(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
+        self.log.warning(msg, *args, **kwargs)
         self.emit(msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
+        self.log.error(msg, *args, **kwargs)
         self.emit(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
+        self.log.error(msg, *args, **kwargs)
         self.emit(msg, *args, **kwargs)
 
 

@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='yt2mp3',
-    version='0.1.5',
+    version='0.1.6',
     packages=['ong_yt2mp3', 'ong_yt2mp3.icons'],
     package_data={
         # Include icon files
