@@ -97,7 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
             #     self.handle_download_finished(True)
             elif d['status'] == "normalizing":
                 pass
-            elif d['status'] == "normalizing_finished":
+            elif d['status'] == "yt2mp3_finished":
                 self.filename = d.get("filename")
                 self.handle_download_finished(True)
             else:
@@ -113,6 +113,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if self.filename:
             if os.path.isfile(self.filename):
                 os.remove(self.filename)
+        if self.tmpfilename:
             if os.path.isfile(self.tmpfilename):
                 os.remove(self.tmpfilename)
         button = dlg.exec()

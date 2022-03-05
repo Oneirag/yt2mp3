@@ -1,9 +1,10 @@
+import logging
 import os.path
 import threading
 from PyQt6 import QtCore
 
 import youtube_dl
-import pynormalize
+import pynormalize.pynormalize as pynormalize
 
 
 # Raised when a Download Thread is manually stopped
@@ -14,14 +15,20 @@ class StopDownloadException(Exception):
 class QLogger(QtCore.QObject):
     messageChanged = QtCore.pyqtSignal(str)
 
-    def debug(self, msg):
-        self.messageChanged.emit(msg)
+    def emit(self, msg, *args, **kwargs):
+        self.messageChanged.emit(msg % args)
 
-    def warning(self, msg):
-        self.messageChanged.emit(msg)
+    def debug(self, msg, *args, **kwargs):
+        self.emit(msg, *args, **kwargs)
 
-    def error(self, msg):
-        self.messageChanged.emit(msg)
+    def warning(self, msg, *args, **kwargs):
+        self.emit(msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        self.emit(msg, *args, **kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        self.emit(msg, *args, **kwargs)
 
 
 class QHook(QtCore.QObject):
@@ -64,18 +71,21 @@ class QYoutubeDL(QtCore.QObject):
             # out_mp3_filename = os.path.join(out_mp3_dir, filename)
             if os.path.isfile(mp3_filename):
                 self.hooks[0](dict(filename=mp3_filename, status="normalizing"))
-                pynormalize.logger = logger     # Force using own logger
+                pynormalize.logger = logger         # Replace logger
+                if options.get("ffmpeg_location"):  # Fix ffmpeg_location, if needed
+                    pynormalize.AudioSegment.ffmpeg = options.get("ffmpeg_location")
                 pynormalize.process_files([mp3_filename], target_dbfs=-13.5,
                                           directory=out_mp3_dir)
                 # os.replace(mp3_filename, out_mp3_filename)
                 # os.rmdir(out_mp3_dir)
-                self.hooks[0](dict(filename=filename, status="normalizing_finished"))
-
+            self.hooks[0](dict(filename=filename, status="yt2mp3_finished"))
             for hook in self.hooks:
                 hook.deleteLater()
             if isinstance(logger, QLogger):
                 logger.deleteLater()
         except Exception as e:
+            logger.error(f"Error {e}")
+            self.hooks[0](dict(status="error", error=e))
             print(e)
 
     def stop(self):
