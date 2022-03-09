@@ -200,7 +200,14 @@ def main():
     defaultLocale = QLocale.system().name()
 
     translator = QTranslator()
-    translator.load(f"{defaultLocale}.xml.qm", "i18n")
+    translation_file = os.path.join(os.path.dirname(__file__), "i18n", f"{defaultLocale}.xml.qm")
+    exists_translation_file = os.path.isfile(translation_file)
+    if exists_translation_file:
+        print(f"Translation file '{translation_file}' found and used")
+    else:
+        print(f"Translation file '{translation_file}' NOT FOUND, default translation will be used")
+
+    translator.load(translation_file)
     app.installTranslator(translator)
 
     window = MainWindow()
