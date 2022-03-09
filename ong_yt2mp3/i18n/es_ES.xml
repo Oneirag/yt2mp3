@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1">
+    <context>
+        <name>BrowserWindow</name>
+        <message>
+            <location filename="../browser.py" line="38"/>
+            <source>Navigation</source>
+            <translation type="finished">Navegación</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="45"/>
+            <source>Back</source>
+            <translation type="finished">Atrás</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="46"/>
+            <source>Go to previous page</source>
+            <translation type="finished">Ir a la página anterior</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="54"/>
+            <source>Forward</source>
+            <translation type="finished">Adelante</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="55"/>
+            <source>Go to next page</source>
+            <translation type="finished">Ir a la página siguiente</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="63"/>
+            <source>Home</source>
+            <translation type="finished">Inicio</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="66"/>
+            <source>Go to home page</source>
+            <translation type="finished">Volver a la página de inicio</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="73"/>
+            <source>Download</source>
+            <translation type="finished">Descargar</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="76"/>
+            <source>Download currently opened link as mp3</source>
+            <translation type="finished">Descargar la página actual como mp3</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="85"/>
+            <location filename="../browser.py" line="82"/>
+            <source>Open download folder</source>
+            <translation type="finished">Abrir carpeta de descargas</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="92"/>
+            <source>Destination folder:</source>
+            <translation type="finished">Carpeta de destino:</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="101"/>
+            <source>Change folder</source>
+            <translation type="finished">Cambiar carpeta</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="104"/>
+            <source>Change destination folder</source>
+            <translation type="finished">Cambiar la carpeta de destino</translation>
+        </message>
+        <message>
+            <location filename="../browser.py" line="110"/>
+            <source>Active downloads:</source>
+            <translation type="finished">Descargas activas:</translation>
+        </message>
+    </context>
+    <context>
+        <name>DownloadWindow</name>
+        <message>
+            <location filename="../dialog_progress.py" line="22"/>
+            <source>Download</source>
+            <translation type="finished">Descargar</translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="25"/>
+            <source>Cancel</source>
+            <translation type="finished">Cancelar</translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="36"/>
+            <source>url:</source>
+            <translation type="finished">url:</translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="76"/>
+            <source>Finished</source>
+            <translation type="finished">Completado</translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="77"/>
+            <source>Download '{}' finished!</source>
+            <translation type="finished">Descarga '{}' completada!</translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="93"/>
+            <source>Downloaded {percentage:.2f}% of {total_mb:.2f}Mb [{speed_kbps:.2f}kb/s]</source>
+            <translation type="finished">Descargado {percentage:.2f}% de {total_mb:.2f}Mb [{speed_kbps:.2f}kb/s]
+            </translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="117"/>
+            <source>Download canceled</source>
+            <translation type="finished">Descarga cancelada</translation>
+        </message>
+        <message>
+            <location filename="../dialog_progress.py" line="119"/>
+            <source>Download '{}' canceled by user!</source>
+            <translation type="finished">Descarga '{}' cancelada por el usuario!</translation>
+        </message>
+    </context>
+</TS>

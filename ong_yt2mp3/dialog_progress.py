@@ -2,6 +2,7 @@
 Based on https://stackoverflow.com/questions/63757798/how-to-integrate-youtube-dl-in-pyqt5
 """
 from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import QCoreApplication
 
 from ong_yt2mp3.qyoutubedl import QLogger, QHook, QYoutubeDL
 
@@ -18,10 +19,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tmpfilename = None
 
         self.url_le = QtWidgets.QLineEdit()
-        self.download_btn = QtWidgets.QPushButton(self.tr("Download"))
+        self.download_btn = QtWidgets.QPushButton(QCoreApplication.translate("DownloadWindow", "Download"))
         if parent is not None:
             self.download_btn.hide()
-        self.cancel_download_btn = QtWidgets.QPushButton(self.tr("Cancel"))
+        self.cancel_download_btn = QtWidgets.QPushButton(QCoreApplication.translate("DownloadWindow", "Cancel"))
         if parent is not None:
             self.download_btn.hide()
 
@@ -32,7 +33,7 @@ class MainWindow(QtWidgets.QMainWindow):
         central_widget = QtWidgets.QWidget()
         self.setCentralWidget(central_widget)
         lay = QtWidgets.QGridLayout(central_widget)
-        lay.addWidget(QtWidgets.QLabel(self.tr("url:")))
+        lay.addWidget(QtWidgets.QLabel(QCoreApplication.translate("DownloadWindow", "url:")))
         lay.addWidget(self.url_le, 0, 1)
         lay.addWidget(self.download_btn, 0, 2)
         lay.addWidget(self.cancel_download_btn, 0, 3)
@@ -72,8 +73,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def handle_download_finished(self, b):
         dlg = QtWidgets.QMessageBox(self)
-        dlg.setWindowTitle("Finished")
-        dlg.setText("Download '{}' finished!".format(self.filename))
+        dlg.setWindowTitle(QCoreApplication.translate("DownloadWindow", "Finished"))
+        dlg.setText(QCoreApplication.translate("DownloadWindow", "Download '{}' finished!").format(self.filename))
         button = dlg.exec()
         self.close()
 
@@ -88,11 +89,15 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.filename = d.get('filename')
                 total_mb = total / 1024 / 1024 if total else 0
                 percentage = 100.0 * downloaded / total
-                self.progress_lbl.setText(f"{percentage:.2f}% of {total_mb:.2f}Mb [{speed_kbps:.2f}kb/s]")
+                self.progress_lbl.setText(
+                    QCoreApplication.translate("DownloadWindow",
+                                               "Downloaded {percentage:.2f}% of {total_mb:.2f}Mb [{speed_kbps:.2f}kb/s]"
+                                               ).format(percentage=percentage, total_mb=total_mb, speed_kbps=speed_kbps)
+                )
                 self.download_pgb.setMaximum(total)
                 self.download_pgb.setValue(downloaded)
             elif d['status'] == "finished":
-                pass    # download finished, but still normalizing
+                pass  # download finished, but still normalizing
                 self.tmpfilename = None
             #     self.filename = d.get('filename')
             #     self.handle_download_finished(True)
@@ -109,8 +114,9 @@ class MainWindow(QtWidgets.QMainWindow):
     def handle_cancel_download(self):
         self.downloader.stop()
         dlg = QtWidgets.QMessageBox(self)
-        dlg.setWindowTitle("Download canceled")
-        dlg.setText("Download '{}' canceled by user!".format(self.filename))
+        dlg.setWindowTitle(QCoreApplication.translate("DownloadWindow", "Download canceled"))
+        dlg.setText(
+            QCoreApplication.translate("DownloadWindow", "Download '{}' canceled by user!").format(self.filename))
         if self.filename:
             if os.path.isfile(self.filename):
                 os.remove(self.filename)

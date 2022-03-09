@@ -5,14 +5,14 @@ with open('requirements.txt') as f:
 
 setup(
     name='yt2mp3',
-    version='0.1.6',
-    packages=['ong_yt2mp3', 'ong_yt2mp3.icons'],
+    version='0.2.0',
+    packages=['ong_yt2mp3', 'ong_yt2mp3.icons', 'ong_yt2mp3.i18n'],
     package_data={
-        # Include icon files
-        "ong_yt2mp3.icons": ["*.png"],
+        "ong_yt2mp3.icons": ["*.png"],          # Include icon files
+        "ong_yt2mp3.i18n": ["*.qm"],            # Include translation files
     },
     url='https://github.com/Oneirag/yt2mp3.git',
-    license='',
+    license='GPL',
     author='oneirag',
     author_email='oneirag@yahoo.es',
     description='Simple tool to download mp3 from youtube',
@@ -22,5 +22,4 @@ setup(
             'yt2mp3 = ong_yt2mp3.browser:main',
         ],
     }
-
 )
