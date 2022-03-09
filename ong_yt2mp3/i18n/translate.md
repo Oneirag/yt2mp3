@@ -9,4 +9,7 @@ QT standard file extension for translations is `.ts` format, but in order to eas
 
 Needs QT 6xx installed. It will generate a `.xml.qm` file
 
-`../../../Qt/6.2.3/macos/bin/lrelease i18n/es_ES.xml`
+It also copies es_ES to en_ES (to make it work in macos)
+
+`../../../Qt/6.2.3/macos/bin/lrelease i18n/es_ES.xml;
+cp i18n/es_ES.xml.qm i18n/en_ES.xml.qm`
