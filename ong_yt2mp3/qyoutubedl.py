@@ -21,6 +21,7 @@ class QtHandler(logging.Handler):
     def handle(self, record: logging.LogRecord) -> bool:
         msg = self.format(record)
         self.signal.emit(msg)
+        return True
 
 
 class QLogger(logging.Logger, QtCore.QObject):
@@ -34,38 +35,6 @@ class QLogger(logging.Logger, QtCore.QObject):
         self.setLevel(logging.DEBUG)
         qt_handler = QtHandler(self.messageChanged)
         self.addHandler(qt_handler)
-
-
-class QLoggerOld(QtCore.QObject):
-    messageChanged = QtCore.pyqtSignal(str)
-
-    def __init__(self):
-        super(QLogger, self).__init__()
-        self.log = logging.getLogger(__name__)
-        handler = logging.StreamHandler()
-        self.log.addHandler(handler)
-        self.log.setLevel(logging.INFO)
-        qt_handler = QtHandler(self.messageChanged)
-        self.log.addHandler(qt_handler)
-
-    def emit(self, msg, *args, **kwargs):
-        self.messageChanged.emit(msg % args)
-
-    def debug(self, msg, *args, **kwargs):
-        self.log.debug(msg, *args, **kwargs)
-        self.emit(msg, *args, **kwargs)
-
-    def warning(self, msg, *args, **kwargs):
-        self.log.warning(msg, *args, **kwargs)
-        self.emit(msg, *args, **kwargs)
-
-    def error(self, msg, *args, **kwargs):
-        self.log.error(msg, *args, **kwargs)
-        self.emit(msg, *args, **kwargs)
-
-    def info(self, msg, *args, **kwargs):
-        self.log.error(msg, *args, **kwargs)
-        self.emit(msg, *args, **kwargs)
 
 
 class QHook(QtCore.QObject):
@@ -84,6 +53,7 @@ class QYoutubeDL(QtCore.QObject):
         super(QYoutubeDL, self).__init__()
         self.th = None
         self.title = None
+        self.duration = None       # Duration (in seconds)
         self.hooks = list()
 
     def download(self, urls, options):
@@ -99,6 +69,8 @@ class QYoutubeDL(QtCore.QObject):
             with youtube_dl.YoutubeDL(options) as ydl:
                 info = ydl.extract_info(urls[0], download=False)
                 self.title = info['title']
+                self.duration = info['duration']
+                self.hooks[0](dict(status="duration", duration=self.duration))
                 ydl.download(urls)
             mp3_filename = options['outtmpl'] % dict(title=self.title,
                                                      ext=options["postprocessors"][0]['preferredcodec'])
