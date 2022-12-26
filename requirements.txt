@@ -5,6 +5,4 @@ pynormalize                 # for normalizing volume of mp3 files
 
 PyQt6
 PyQt6-WebEngine
-plyer   # does not work in macos!!
-pync    # works in macos
 superqt       # A range slider for cutting files

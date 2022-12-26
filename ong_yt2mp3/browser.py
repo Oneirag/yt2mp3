@@ -7,17 +7,13 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtGui import *
 from PyQt6.QtWebEngineWidgets import *
 
-from plyer import notification
 import os
 import sys
 from time import sleep
 from ong_yt2mp3.download import base_dir
 from ong_yt2mp3.icons.icons import get_icon
 from ong_yt2mp3.dialog_progress import MainWindow as ProgressWindow
-
-
-if sys.platform == "darwin":
-    import pync  # Notifications that work in macos
+from ong_yt2mp3.js_addblock import addblock_js_script
 
 
 class MainWindow(QMainWindow):
@@ -33,6 +29,7 @@ class MainWindow(QMainWindow):
         self.browser = QWebEngineView()
         self.handle_navigate_home()
         self.browser.loadFinished.connect(self.handle_update_title)
+        self.browser.urlChanged.connect(self.handle_url_changed)
         self.setCentralWidget(self.browser)
 
         navtb = QToolBar(QCoreApplication.translate("BrowserWindow", "Navigation"))
@@ -116,6 +113,12 @@ class MainWindow(QMainWindow):
         # self.show()
         self.showMaximized()
 
+    def handle_url_changed(self, new_url):
+        """Event fired when a new page is opened. Js for add blocker is injected here"""
+        self.browser.page().runJavaScript(
+            addblock_js_script
+        )
+
     def handle_download_combo(self, idx):
         window = self.download_windows[idx]
         # this will remove minimized status
@@ -180,18 +183,18 @@ class MainWindow(QMainWindow):
         title = self.browser.page().title()
         self.setWindowTitle("%s - OngYouTubeDownloader" % title)
         if self.first_load:
-            import time
-            time.sleep(1.5)  # Needs a bit of time to load page JS
             self.browser.page().runJavaScript(
-                'document.getElementById("lightbox").getElementsByClassName("buttons")[0].children[1].click();')
+                """
+                buttons = document.getElementById("lightbox").getElementsByTagName("ytd-button-renderer");
+                for(const button of buttons){
+                    const txt = typeof button.innerText === 'string' ? button.innerText.toUpperCase() : '';
+                    if (txt  == "RECHAZAR TODO"){
+                        // alert("click!");
+                        button.getElementsByTagName("button")[0].click();
+                    }
+                }
+                """)
             self.first_load = False
-
-
-def notifiy(msg, title="Python"):
-    if sys.platform != "darwin":
-        notification.notify(msg, title=title)
-    else:
-        pync.notify(msg, title=title)
 
 
 def main():
