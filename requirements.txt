@@ -1,4 +1,5 @@
-youtube-dl                  # for downloading videos
+# youtube-dl                # for downloading youtube videos. Asof 202306: fails to work
+yt-dlp                      # for downloading youtube videos
 youtube-search-python       # for searching youtube by name
 pynormalize                 # for normalizing volume of mp3 files
 

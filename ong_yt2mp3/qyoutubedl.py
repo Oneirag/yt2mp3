@@ -3,7 +3,8 @@ import os.path
 import threading
 from PyQt6 import QtCore
 
-import youtube_dl
+# import youtube_dl
+import yt_dlp
 import pynormalize.pynormalize as pynormalize
 
 
@@ -53,7 +54,7 @@ class QYoutubeDL(QtCore.QObject):
         super(QYoutubeDL, self).__init__()
         self.th = None
         self.title = None
-        self.duration = None       # Duration (in seconds)
+        self.duration = None  # Duration (in seconds)
         self.hooks = list()
 
     def download(self, urls, options):
@@ -66,21 +67,24 @@ class QYoutubeDL(QtCore.QObject):
                 self.hooks.append(hook)
         logger = options.get("logger")
         try:
-            with youtube_dl.YoutubeDL(options) as ydl:
+            with yt_dlp.YoutubeDL(options) as ydl:
                 info = ydl.extract_info(urls[0], download=False)
                 self.title = info['title']
                 self.duration = info['duration']
                 self.hooks[0](dict(status="duration", duration=self.duration))
                 ydl.download(urls)
-            mp3_filename = options['outtmpl'] % dict(title=self.title,
-                                                     ext=options["postprocessors"][0]['preferredcodec'])
+            output = options['outtmpl']
+            if isinstance(output, dict):
+                output = output['default']
+            mp3_filename = output % dict(title=self.title,
+                                         ext=options["postprocessors"][0]['preferredcodec'])
             dirname, filename = os.path.split(mp3_filename)
-            out_mp3_dir = dirname   # overwrite original file
+            out_mp3_dir = dirname  # overwrite original file
             # out_mp3_dir = os.path.join(dirname, "normalized")
             # out_mp3_filename = os.path.join(out_mp3_dir, filename)
             if os.path.isfile(mp3_filename):
                 self.hooks[0](dict(filename=mp3_filename, status="normalizing"))
-                pynormalize.logger = logger         # Replace logger
+                pynormalize.logger = logger  # Replace logger
                 if options.get("ffmpeg_location"):  # Fix ffmpeg_location, if needed
                     pynormalize.AudioSegment.ffmpeg = options.get("ffmpeg_location")
                 pynormalize.process_files([mp3_filename], target_dbfs=-13.5,
@@ -101,4 +105,3 @@ class QYoutubeDL(QtCore.QObject):
         if self.th is not None:
             for hook in self.hooks:
                 hook.stop = True
-
