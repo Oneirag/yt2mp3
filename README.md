@@ -11,7 +11,9 @@ To install it:
 - windows: download files from https://ffmpeg.org/download.html#build-windows and place files in path 
 (typically, current dir)
 - macos: with M1 chip, it is needed to be installed using homebrew `brew install ffmpeg`
+
 ### Installation
+These steps will install program and create a desktop shorcut to lauch it.
 ```bash
 pip install git+https://github.com/Oneirag/yt2mp3.git
 python -m ong_yt2mp3.post_install

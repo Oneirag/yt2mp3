@@ -1,6 +1,6 @@
 import sys
 import os
-import youtube_dl
+import yt_dlp as youtube_dl
 
 base_dir = os.path.join(os.path.expanduser("~"), "Downloads", "yt2mp3")
 test_url = "https://www.youtube.com/watch?v=uqQglwBzFT4"    # imperial march
