@@ -1,7 +1,7 @@
 [project]
 name = "yt2mp3"
 version = "0.4.0"
-license = "GPL"
+# license = "GPL"
 authors = [
     { email = "oneirag@yahoo.es", name = "Oscar Neira" }
 ]
