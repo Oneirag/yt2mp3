@@ -18,7 +18,7 @@ dependencies = [
     "PyQt6-WebEngine",
     "superqt",       # A range slider for cutting files
     # Post install script won't be needed in this case
-    "ong_utils @ git+https://github.com/Oneirag/ong_utils@feature/shortcuts"
+    "ong_utils @ git+https://github.com/Oneirag/ong_utils"
 ]
 
 [tool.setuptools.packages.find]
