@@ -10,7 +10,7 @@ from ong_yt2mp3.qyoutubedl import QLogger, QHook, QYoutubeDL
 from ong_yt2mp3.download import get_ydl_opts, base_dir, test_url
 import os
 import datetime
-from pynormalize.pynormalize import AudioSegment
+from pynormalize import AudioSegment
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -120,7 +120,7 @@ class MainWindow(QtWidgets.QMainWindow):
                 self.progress_lbl.show()
                 total = d["total_bytes"]
                 downloaded = d["downloaded_bytes"]
-                speed_kbps = d.get('speed', 0) / 1024
+                speed_kbps = (d.get('speed') or 0) / 1024
                 self.tmpfilename = d.get('tmpfilename')
                 self.filename = d.get('filename')
                 total_mb = total / 1024 / 1024 if total else 0

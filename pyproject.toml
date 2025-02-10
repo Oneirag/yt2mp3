@@ -13,12 +13,15 @@ dependencies = [
     # youtube-dl,                # for downloading youtube videos. Asof 202306: fails to work
     "yt-dlp",                      # for downloading youtube videos
     "youtube-search-python",       # for searching youtube by name
-    "pynormalize",                 # for normalizing volume of mp3 files
+    # "pynormalize",                 # for normalizing volume of mp3 files
+    "mutagen",
+    "pydub",
     "PyQt6",
     "PyQt6-WebEngine",
     "superqt",       # A range slider for cutting files
     # Post install script won't be needed in this case
-    "ong_utils @ git+https://github.com/Oneirag/ong_utils"
+    "ong_utils",
+    "ong_utils[shortcuts]"
 ]
 
 [tool.setuptools.packages.find]

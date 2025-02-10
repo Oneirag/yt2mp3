@@ -5,7 +5,7 @@ from PyQt6 import QtCore
 
 # import youtube_dl
 import yt_dlp
-import pynormalize.pynormalize as pynormalize
+import pynormalize
 
 
 # Raised when a Download Thread is manually stopped
