@@ -8,21 +8,10 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.8"
 description = "Simple tool to download mp3 from youtube"
+dynamic = ["dependencies"]
 
-dependencies = [
-    # youtube-dl,                # for downloading youtube videos. Asof 202306: fails to work
-    "yt-dlp",                      # for downloading youtube videos
-    "youtube-search-python",       # for searching youtube by name
-    # "pynormalize",                 # for normalizing volume of mp3 files
-    "mutagen",
-    "pydub",
-    "PyQt6",
-    "PyQt6-WebEngine",
-    "superqt",       # A range slider for cutting files
-    # Post install script won't be needed in this case
-    "ong_utils",
-    "ong_utils[shortcuts]"
-]
+[tool.setuptools]
+dynamic = {dependencies = {file = ["requirements.txt"]}}
 
 [tool.setuptools.packages.find]
 # scanning for namespace packages is true by default in pyproject.toml, so
